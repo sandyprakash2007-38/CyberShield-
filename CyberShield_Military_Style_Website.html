@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#171b14">
+<title>CYBERSHIELD // Defense Systems Simulator</title>
+<style>
+:root{
+ --bg:#10130f;--panel:#1b2119;--panel2:#22291f;--olive:#68764b;--olive2:#9aa879;
+ --sand:#d4c8a5;--muted:#a7ad9c;--line:#3a4433;--green:#9fca76;--amber:#e0b65d;--red:#e16f5d;
+ --mono:"Courier New",monospace;--sans:Arial,Helvetica,sans-serif
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:#eef0e7;font-family:var(--sans);line-height:1.55}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;opacity:.12;background-image:linear-gradient(rgba(154,168,121,.18) 1px,transparent 1px),linear-gradient(90deg,rgba(154,168,121,.18) 1px,transparent 1px);background-size:42px 42px}
+a{color:inherit;text-decoration:none}button,input,textarea{font:inherit}
+.topline{height:5px;background:repeating-linear-gradient(135deg,#68764b 0 12px,#1b2119 12px 24px)}
+header{position:sticky;top:0;z-index:10;background:rgba(16,19,15,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav{max-width:1200px;margin:auto;padding:14px 22px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-weight:bold;letter-spacing:1.4px}
+.brand-mark{width:42px;height:42px;border:1px solid var(--olive2);display:grid;place-items:center;background:#252d20;clip-path:polygon(50% 0,91% 17%,84% 74%,50% 100%,16% 74%,9% 17%);color:var(--green);font-size:21px}
+.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:2px;font-weight:normal;margin-top:2px}
+.navlinks{display:flex;gap:20px;flex-wrap:wrap;font-size:12px;color:var(--muted);font-family:var(--mono);text-transform:uppercase}
+.navlinks a:hover{color:var(--green)}
+.status{display:flex;align-items:center;gap:8px;font:11px var(--mono);color:var(--green);white-space:nowrap}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 9px currentColor}
+.wrap{max-width:1200px;margin:auto;padding:0 22px}
+.hero{padding:70px 0 48px;position:relative;overflow:hidden}
+.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:44px;align-items:center}
+.kicker{font:12px var(--mono);letter-spacing:2px;color:var(--olive2);text-transform:uppercase}
+h1{font-size:clamp(38px,5.3vw,68px);line-height:1.02;letter-spacing:-1.8px;margin:17px 0 22px;text-transform:uppercase}
+h1 span{color:var(--green)}
+.lead{color:#c2c8b8;font-size:17px;max-width:610px}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:13px 18px;border:1px solid var(--olive2);font:12px var(--mono);letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:.2s}
+.btn.primary{background:var(--olive);color:white}.btn:hover{transform:translateY(-2px);filter:brightness(1.15)}
+.btn.secondary{background:transparent;color:var(--sand)}
+.note{margin-top:20px;color:var(--muted);font:11px var(--mono);letter-spacing:.5px}
+.hud{border:1px solid var(--line);background:linear-gradient(145deg,#22291f,#131711);padding:18px;position:relative;box-shadow:10px 10px 0 #0a0c09}
+.hud:before,.hud:after{content:"";position:absolute;width:25px;height:25px;border-color:var(--olive2);border-style:solid}
+.hud:before{left:-1px;top:-1px;border-width:2px 0 0 2px}.hud:after{right:-1px;bottom:-1px;border-width:0 2px 2px 0}
+.hud-head{display:flex;justify-content:space-between;gap:12px;font:11px var(--mono);color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:12px}
+.tag{border:1px solid var(--olive);padding:3px 7px;color:var(--green);font:10px var(--mono)}
+.map{height:240px;margin:16px 0;background-color:#202a1c;background-image:linear-gradient(35deg,transparent 48%,#4b5938 49%,transparent 50%),linear-gradient(145deg,transparent 48%,#4b5938 49%,transparent 50%),repeating-radial-gradient(ellipse at 55% 45%,transparent 0 23px,rgba(154,168,121,.3) 24px 25px,transparent 26px 44px);position:relative;overflow:hidden;border:1px solid #46513b}
+.map:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 27px,rgba(174,189,139,.12) 28px),repeating-linear-gradient(90deg,transparent 0 27px,rgba(174,189,139,.12) 28px)}
+.map-label{position:absolute;font:10px var(--mono);color:#c8d2b0;letter-spacing:1px}
+.radar{position:absolute;left:51%;top:48%;width:120px;height:120px;transform:translate(-50%,-50%);border:1px solid #9fca76;border-radius:50%;box-shadow:0 0 20px #5c7a3c66}
+.radar:before,.radar:after{content:"";position:absolute;background:#9fca76;opacity:.55}.radar:before{height:1px;left:0;right:0;top:50%}.radar:after{width:1px;top:0;bottom:0;left:50%}
+.radar-center{position:absolute;width:9px;height:9px;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--green);border-radius:50%;box-shadow:0 0 15px var(--green)}
+.drone{position:absolute;left:51%;top:48%;transform:translate(-50%,-50%);font-size:25px;color:#e0e7ce;text-shadow:0 0 10px #9fca76}
+.map .coords{position:absolute;bottom:10px;left:10px;color:var(--muted);font:10px var(--mono)}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.metric{background:#11160f;border:1px solid var(--line);padding:11px}
+.metric small{display:block;color:var(--muted);font:9px var(--mono);letter-spacing:.7px}
+.metric strong{display:block;margin-top:5px;font:15px var(--mono);color:var(--green)}
+.section{padding:58px 0;border-top:1px solid #30382a}
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:25px}
+.section h2{font-size:clamp(26px,3.5vw,39px);line-height:1.1;margin:9px 0 0;text-transform:uppercase;letter-spacing:-.7px}
+.section-intro{max-width:620px;color:var(--muted)}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);padding:22px;position:relative}
+.card:before{content:"";position:absolute;left:0;top:0;width:34px;height:3px;background:var(--olive2)}
+.card .index{font:11px var(--mono);color:var(--olive2);letter-spacing:1px}
+.card h3{font-size:17px;text-transform:uppercase;margin:12px 0 8px;letter-spacing:.4px}
+.card p{color:var(--muted);font-size:14px;margin:0}
+.iconbox{width:38px;height:38px;display:grid;place-items:center;background:#303a27;border:1px solid #4a5839;color:var(--green);font:19px var(--mono);margin-bottom:14px}
+.scenario-layout{display:grid;grid-template-columns:.75fr 1.25fr;gap:18px}
+.scenario-list{display:grid;gap:9px}
+.scenario{width:100%;text-align:left;background:#1a2017;border:1px solid var(--line);color:#e8ebdf;padding:15px;cursor:pointer;display:flex;align-items:center;gap:12px}
+.scenario.active{border-color:var(--green);background:#293323}
+.scenario .lamp{width:9px;height:9px;background:var(--olive2);border-radius:50%;flex:none}
+.scenario.active .lamp{background:var(--green);box-shadow:0 0 9px var(--green)}
+.scenario strong{display:block;font:12px var(--mono);letter-spacing:.5px}
+.scenario small{display:block;color:var(--muted);font-size:11px;margin-top:3px}
+.detail{background:#171c14;border:1px solid var(--line);padding:23px}
+.detail-top{display:flex;justify-content:space-between;gap:15px;align-items:center;border-bottom:1px solid var(--line);padding-bottom:15px}
+.detail h3{margin:0;text-transform:uppercase;font-size:20px}
+.severity{font:11px var(--mono);padding:5px 8px;border:1px solid var(--green);color:var(--green)}
+.severity.warn{border-color:var(--amber);color:var(--amber)}.severity.critical{border-color:var(--red);color:var(--red)}
+.detail p{color:#c0c7b5}
+.steps{padding-left:19px;color:var(--muted);font-size:14px}.steps li{padding:4px 0}
+.disclaimer{margin-top:15px;padding:12px;border-left:3px solid var(--amber);background:#29271b;color:#d9cea8;font-size:12px}
+.learn-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+details{background:var(--panel);border:1px solid var(--line);padding:16px 18px}
+summary{cursor:pointer;font-weight:bold;text-transform:uppercase;font-size:13px;letter-spacing:.4px}
+details p{color:var(--muted);font-size:14px;margin-bottom:0}
+.faq-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.contact-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:25px}
+form{display:grid;gap:12px}
+label{font:11px var(--mono);color:var(--olive2);text-transform:uppercase;display:grid;gap:6px}
+input,textarea{width:100%;background:#11160f;border:1px solid var(--line);padding:12px;color:#f0f2e9;outline:none}
+input:focus,textarea:focus{border-color:var(--green)}
+textarea{min-height:100px;resize:vertical}
+footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font:11px var(--mono)}
+.footer-inner{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.toast{display:none;margin-top:12px;padding:12px;background:#20291a;border:1px solid var(--olive2);color:var(--green);font-size:13px}
+@media(max-width:850px){.hero-grid,.scenario-layout,.contact-grid{grid-template-columns:1fr}.grid3{grid-template-columns:repeat(2,1fr)}.nav{align-items:flex-start;flex-wrap:wrap}.navlinks{order:3;width:100%;gap:14px}.status{margin-left:auto}.section-head{align-items:flex-start;flex-direction:column}}
+@media(max-width:560px){.grid3,.learn-grid,.faq-grid{grid-template-columns:1fr}.hero{padding-top:45px}.metrics{grid-template-columns:1fr}.map{height:200px}.brand{font-size:13px}.navlinks{font-size:10px}}
+</style>
+</head>
+<body>
+<div class="topline"></div>
+<header>
+ <nav class="nav">
+  <a class="brand" href="#top"><span class="brand-mark">⬡</span><span>CYBERSHIELD<small>DEFENSE SYSTEMS SIMULATOR</small></span></a>
+  <div class="navlinks"><a href="#mission">Mission</a><a href="#capabilities">Capabilities</a><a href="#simulator">Threat lab</a><a href="#academy">Learning hub</a><a href="#faq">FAQ</a><a href="#contact">Connect</a></div>
+  <div class="status"><span class="dot"></span> TRAINING MODE / OFFLINE</div>
+ </nav>
+</header>
+<main id="top">
+<section class="hero wrap">
+ <div class="hero-grid">
+  <div>
+   <div class="kicker">[ CYBER DEFENSE • UNMANNED SYSTEMS • TRAINING ]</div>
+   <h1>Secure the mission.<br><span>Simulate the threat.</span></h1>
+   <p class="lead">Explore drone cybersecurity concepts through a military-inspired training dashboard. Examine simulated navigation anomalies, command verification alerts and telemetry interruptions—without connecting to real equipment.</p>
+   <div class="actions"><a class="btn primary" href="#simulator">▶ Launch scenario lab</a><a class="btn secondary" href="#capabilities">Explore capabilities ↘</a></div>
+   <p class="note">◆ EDUCATIONAL PROTOTYPE &nbsp; / &nbsp; NO LIVE DRONE CONNECTION &nbsp; / &nbsp; SIMULATED DATA</p>
+  </div>
+  <div class="hud">
+   <div class="hud-head"><span>FIELD DISPLAY // 01</span><span class="tag">SIMULATION ONLY</span></div>
+   <div class="map">
+    <span class="map-label" style="top:12px;left:12px">SECTOR GRID: C-07</span><span class="map-label" style="top:13px;right:12px">TRAINING RANGE</span>
+    <div class="radar"><div class="radar-center"></div></div><div class="drone">✣</div>
+    <span class="coords">GRID 18-42 / POSITION DATA SIMULATED</span>
+   </div>
+   <div class="metrics">
+    <div class="metric"><small>NAV INTEGRITY</small><strong id="navMetric">98.4%</strong></div>
+    <div class="metric"><small>LINK STATUS</small><strong id="linkMetric">STABLE</strong></div>
+    <div class="metric"><small>AUTH CHECK</small><strong id="authMetric">MONITORED</strong></div>
+   </div>
+  </div>
+ </div>
+</section>
+<section class="section" id="mission"><div class="wrap">
+ <div class="section-head"><div><div class="kicker">01 / MISSION BRIEF</div><h2>Understand the risk.<br>Practice the response.</h2></div><p class="section-intro">CyberShield is a software-only concept designed to help learners understand how monitoring and verification can support safer unmanned-system operations. It demonstrates ideas—not field-ready defense capability.</p></div>
+ <div class="grid3">
+  <article class="card"><div class="index">OBJECTIVE 01</div><h3>Observe</h3><p>Review example telemetry and simulated system status indicators in one dashboard.</p></article>
+  <article class="card"><div class="index">OBJECTIVE 02</div><h3>Identify</h3><p>Explore illustrative warning patterns involving navigation data, command trust and communication links.</p></article>
+  <article class="card"><div class="index">OBJECTIVE 03</div><h3>Respond</h3><p>Walk through cautious review steps, incident recording and human-supervised decision making.</p></article>
+ </div>
+</div></section>
+<section class="section" id="capabilities"><div class="wrap">
+ <div class="section-head"><div><div class="kicker">02 / SYSTEM CAPABILITIES</div><h2>Mission control modules</h2></div><p class="section-intro">A unified interface for learning the fundamentals of drone cybersecurity, presented with a tactical operations-room visual style.</p></div>
+ <div class="grid3">
+  <article class="card"><div class="iconbox">⌖</div><div class="index">MODULE 01</div><h3>Telemetry overview</h3><p>Inspect fictional altitude, battery, link and navigation values in a consolidated status view.</p></article>
+  <article class="card"><div class="iconbox">◉</div><div class="index">MODULE 02</div><h3>Threat monitoring</h3><p>View sample alerts and understand why unusual data should be reviewed rather than blindly trusted.</p></article>
+  <article class="card"><div class="iconbox">▤</div><div class="index">MODULE 03</div><h3>Incident history</h3><p>See a sample incident log showing timestamps, event categories, severity and review status.</p></article>
+  <article class="card"><div class="iconbox">⌁</div><div class="index">MODULE 04</div><h3>Navigation integrity</h3><p>Learn conceptually why comparing independent sensor signals can help reveal inconsistencies.</p></article>
+  <article class="card"><div class="iconbox">✓</div><div class="index">MODULE 05</div><h3>Command trust</h3><p>Explore the principle of verifying command authenticity before accepting a sensitive instruction.</p></article>
+  <article class="card"><div class="iconbox">✚</div><div class="index">MODULE 06</div><h3>Learning hub</h3><p>Build foundational knowledge with plain-language explanations and safe scenario-based practice.</p></article>
+ </div>
+</div></section>
+<section class="section" id="simulator"><div class="wrap">
+ <div class="section-head"><div><div class="kicker">03 / THREAT LAB</div><h2>Choose a training scenario</h2></div><p class="section-intro">Select a scenario to update the sample status panel. These are pre-written educational examples, not live detection or control functions.</p></div>
+ <div class="scenario-layout">
+  <div class="scenario-list">
+   <button class="scenario active" data-case="normal"><span class="lamp"></span><span><strong>01 / Normal operations</strong><small>Routine status review</small></span></button>
+   <button class="scenario" data-case="gps"><span class="lamp"></span><span><strong>02 / GPS anomaly</strong><small>Navigation inconsistency</small></span></button>
+   <button class="scenario" data-case="command"><span class="lamp"></span><span><strong>03 / Unverified command</strong><small>Trust verification alert</small></span></button>
+   <button class="scenario" data-case="link"><span class="lamp"></span><span><strong>04 / Telemetry interruption</strong><small>Communication loss</small></span></button>
+  </div>
+  <div class="detail">
+   <div class="detail-top"><h3 id="caseTitle">Normal operations</h3><span class="severity" id="severity">STATUS: ROUTINE</span></div>
+   <p id="caseDesc">All sample indicators are within the illustrative training range. Continue monitoring and keep a clear record of status changes.</p>
+   <h4 class="kicker">RECOMMENDED REVIEW CHECKLIST</h4>
+   <ol class="steps" id="caseSteps"><li>Review the telemetry summary.</li><li>Confirm the status indicators are consistent.</li><li>Record the routine check in the training log.</li></ol>
+   <div class="disclaimer">TRAINING NOTE: This panel changes illustrative text only. It does not scan signals, detect actual attacks, transmit commands or control a drone.</div>
+  </div>
+ </div>
+</div></section>
+<section class="section" id="academy"><div class="wrap">
+ <div class="section-head"><div><div class="kicker">04 / FIELD ACADEMY</div><h2>Learn the fundamentals</h2></div><p class="section-intro">Short, beginner-friendly explainers for the ideas behind a secure monitoring workflow.</p></div>
+ <div class="learn-grid">
+  <details open><summary>What is GPS spoofing?</summary><p>It is a type of interference where a receiver is misled by false positioning signals. In real systems, detecting it is difficult and requires carefully validated methods and sensor context.</p></details>
+  <details><summary>Why verify commands?</summary><p>Command authentication helps a system distinguish authorized instructions from untrusted ones. Real implementations need secure key handling, testing and a defined recovery process.</p></details>
+  <details><summary>What is telemetry?</summary><p>Telemetry is status information sent by a system, such as position estimates, battery level or communication quality. Monitoring it can help operators notice unexpected changes.</p></details>
+  <details><summary>Why keep an incident log?</summary><p>A clear log records what was observed, when it happened, severity and follow-up status. It supports review and learning without assuming every alert is a confirmed attack.</p></details>
+ </div>
+</div></section>
+<section class="section" id="faq"><div class="wrap">
+ <div class="section-head"><div><div class="kicker">05 / OPERATIONS FAQ</div><h2>Before you deploy</h2></div></div>
+ <div class="faq-grid">
+  <details><summary>Is this connected to a real drone?</summary><p>No. CyberShield is a website prototype using simulated examples. It does not connect to, command or monitor physical drones.</p></details>
+  <details><summary>Does it guarantee threat detection?</summary><p>No. It is an educational demonstration, not a validated cybersecurity product. The scenario descriptions are illustrative only.</p></details>
+  <details><summary>Who is it for?</summary><p>Students, educators and people exploring cybersecurity concepts for unmanned systems, including those interested in defense and aerospace.</p></details>
+  <details><summary>Are form details stored?</summary><p>No. The contact form below prepares a message locally in your browser; it does not send data to a server or save submissions.</p></details>
+ </div>
+</div></section>
+<section class="section" id="contact"><div class="wrap">
+ <div class="section-head"><div><div class="kicker">06 / CONTACT & COLLABORATION</div><h2>Join the learning mission</h2></div><p class="section-intro">Share a project question, suggest an educational scenario or discuss a classroom demonstration.</p></div>
+ <div class="contact-grid">
+  <div class="card"><div class="index">PROJECT STATUS / EARLY CONCEPT</div><h3>Built for safe exploration</h3><p>This prototype focuses on visualizing concepts and encouraging careful review. It is not intended for operational military use and has not been validated for real-world safety or security.</p><p style="margin-top:18px;color:var(--sand);font:12px var(--mono)">DESIGNATION: CS-TRAINING-01<br>MODE: SIMULATION ONLY<br>CONNECTIVITY: LOCAL DEMO</p></div>
+  <form id="contactForm"><label>Your name<input id="name" required placeholder="Enter your name"></label><label>Email (optional)<input id="email" type="email" placeholder="you@example.com"></label><label>Message<textarea id="message" required placeholder="What would you like to explore?"></textarea></label><button class="btn primary" type="submit">Prepare enquiry ↗</button><div id="toast" class="toast">Your message is ready in a draft window. Nothing was sent or stored by this website.</div></form>
+ </div>
+</div></section>
+</main>
+<footer><div class="wrap footer-inner"><span>CYBERSHIELD // DEFENSE SYSTEMS SIMULATOR</span><span>EDUCATIONAL CONCEPT • SIMULATED DATA ONLY</span><span>© 2026 / TRAINING BUILD 0.2</span></div></footer>
+<script>
+const cases={
+ normal:{title:"Normal operations",severity:"STATUS: ROUTINE",kind:"",desc:"All sample indicators are within the illustrative training range. Continue monitoring and keep a clear record of status changes.",steps:["Review the telemetry summary.","Confirm the status indicators are consistent.","Record the routine check in the training log."],nav:"98.4%",link:"STABLE",auth:"MONITORED"},
+ gps:{title:"GPS anomaly",severity:"STATUS: REVIEW",kind:"warn",desc:"The training scenario introduces a mismatch between example navigation values. Treat the mismatch as a reason to investigate—not proof of spoofing.",steps:["Compare the reported position with other available indicators.","Check whether the data is stale, noisy or inconsistent.","Escalate for qualified human review and document the observation."],nav:"MISMATCH",link:"STABLE",auth:"REVIEW"},
+ command:{title:"Unverified command",severity:"STATUS: CAUTION",kind:"critical",desc:"A fictional command arrives without a confirmed trust status. The scenario illustrates why sensitive instructions should be authenticated before acceptance.",steps:["Do not assume an unverified instruction is legitimate.","Review the authentication status using approved procedures.","Log the event and follow the system's documented safety process."],nav:"98.4%",link:"STABLE",auth:"UNVERIFIED"},
+ link:{title:"Telemetry interruption",severity:"STATUS: DEGRADED",kind:"warn",desc:"The example telemetry feed becomes intermittent. The dashboard demonstrates how a communication warning can be surfaced for operator review.",steps:["Mark the telemetry as incomplete rather than guessing missing values.","Check the communication status through approved procedures.","Follow the documented contingency plan and record the interruption."],nav:"UNKNOWN",link:"INTERRUPTED",auth:"MONITORED"}
+};
+document.querySelectorAll(".scenario").forEach(btn=>btn.addEventListener("click",()=>{
+ document.querySelectorAll(".scenario").forEach(b=>b.classList.remove("active"));btn.classList.add("active");
+ const c=cases[btn.dataset.case];document.getElementById("caseTitle").textContent=c.title;document.getElementById("severity").textContent=c.severity;document.getElementById("severity").className="severity "+c.kind;document.getElementById("caseDesc").textContent=c.desc;
+ const ol=document.getElementById("caseSteps");ol.innerHTML="";c.steps.forEach(s=>{const li=document.createElement("li");li.textContent=s;ol.appendChild(li)});
+ document.getElementById("navMetric").textContent=c.nav;document.getElementById("linkMetric").textContent=c.link;document.getElementById("authMetric").textContent=c.auth;
+}));
+document.getElementById("contactForm").addEventListener("submit",e=>{
+ e.preventDefault();const name=document.getElementById("name").value.trim(),email=document.getElementById("email").value.trim(),message=document.getElementById("message").value.trim();
+ const draft=`CyberShield project enquiry\nName: ${name}\nEmail: ${email||"Not provided"}\n\n${message}`;
+ document.getElementById("toast").style.display="block";
+ const blob=new Blob([draft],{type:"text/plain"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="cybershield-enquiry-draft.txt";a.click();URL.revokeObjectURL(url);
+});
+</script>
+</body>
+</html>
